@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.trustedanalytics.modelcatalog</groupId>
             <artifactId>model-catalog</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
             <classifier>api</classifier>
         </dependency>
 
