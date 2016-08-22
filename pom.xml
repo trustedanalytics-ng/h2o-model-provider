@@ -7,7 +7,7 @@
 
     <groupId>org.trustedanalytics.modelcatalog</groupId>
     <artifactId>h2o-model-provider</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
 
     <parent>
@@ -159,6 +159,15 @@
                         <argument>target/classes/manifest.yml</argument>
                         <argument>manifest.yml</argument>
                     </arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration combine.children="append">
+                    <excludes>
+                        <exclude>**/Application*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
