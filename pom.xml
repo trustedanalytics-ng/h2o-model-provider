@@ -7,13 +7,13 @@
 
     <groupId>org.trustedanalytics.modelcatalog</groupId>
     <artifactId>h2o-model-provider</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
 
     <parent>
         <groupId>org.trustedanalytics</groupId>
         <artifactId>trustedanalytics-cloud-parent</artifactId>
-        <version>0.6.1</version>
+        <version>0.6.2</version>
     </parent>
 
 
@@ -160,24 +160,6 @@
                         <argument>manifest.yml</argument>
                     </arguments>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <configuration combine.children="append">
-                    <excludes>
-                        <exclude>**/Application*</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>jacoco-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
 
