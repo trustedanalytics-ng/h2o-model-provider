@@ -18,8 +18,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.security.OAuth2TokenExtractor;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.service.H2oInstanceCacheLoader;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,10 +31,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import feign.Feign;
 import feign.Feign.Builder;
@@ -64,7 +61,7 @@ public class ApplicationConfiguration {
   private long cacheExpirationTimeS;
 
   @Bean
-  public LoadingCache<Instance, H2oInstance> buildH2oInstanceCache() {
+  public LoadingCache<H2oInstanceCredentials, H2oInstance> buildH2oInstanceCache() {
     return CacheBuilder.newBuilder()
             .maximumSize(maximumCacheSize)
             .expireAfterWrite(cacheExpirationTimeS, TimeUnit.SECONDS)
@@ -74,11 +71,6 @@ public class ApplicationConfiguration {
   @Bean
   public H2oClientsPool h2oClientsPool() {
     return new H2oClientsPool(clientSupplier());
-  }
-
-  @Bean
-  public Function<Authentication, String> tokenExtractor() {
-    return new OAuth2TokenExtractor();
   }
 
   @Bean

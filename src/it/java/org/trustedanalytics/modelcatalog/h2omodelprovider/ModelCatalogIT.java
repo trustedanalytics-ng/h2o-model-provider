@@ -21,7 +21,7 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 
 import com.google.common.cache.LoadingCache;
@@ -57,7 +57,7 @@ public class ModelCatalogIT {
   private H2oInstancesOperations h2oInstancesOperations;
 
   @Autowired
-  private LoadingCache<Instance, H2oInstance> h2oInstanceCache;
+  private LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Test
   public void shouldGetAndCacheModels() throws ExecutionException {
@@ -66,10 +66,10 @@ public class ModelCatalogIT {
 
     h2oInstancesOperations.getAnalyticsToolInstances(UUID.randomUUID());
 
-    Instance h2oInstanceCredentials = new Instance();
+    H2oInstanceCredentials h2oInstanceCredentials = new H2oInstanceCredentials();
     h2oInstanceCredentials.setId("test-guid");
 
-    Instance h2oInstanceCredentialsNonexistent = new Instance();
+    H2oInstanceCredentials h2oInstanceCredentialsNonexistent = new H2oInstanceCredentials();
     h2oInstanceCredentialsNonexistent.setId("nonexistent-guid");
 
     assertEquals(1, h2oInstanceCache.size());
@@ -103,9 +103,9 @@ public class ModelCatalogIT {
     }
 
     @RequestMapping(value = "/api/v1/services", method = RequestMethod.GET)
-    public Collection<Instance> fetchOfferings() {
-      Collection<Instance> toReturn = new ArrayList<>();
-      Instance instance = new Instance();
+    public Collection<H2oInstanceCredentials> fetchOfferings() {
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
+      H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("h2o-guid");
       instance.setName("h2o");
       toReturn.add(instance);
@@ -113,35 +113,21 @@ public class ModelCatalogIT {
     }
 
     @RequestMapping(value = "/api/v1/services/{serviceId}/instances", method = RequestMethod.GET)
-    public Collection<Instance> fetchAllCredentials(@PathVariable String serviceId) {
-      Collection<Instance> toReturn = new ArrayList<>();
-      Instance instance = new Instance();
+    public Collection<H2oInstanceCredentials> fetchAllCredentials(@PathVariable String serviceId) {
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
+      H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");
 
-      Collection<Metadata> metadatas = new ArrayList<Metadata>() {{
+      Collection<Metadata> metadata = new ArrayList<Metadata>() {{
         add(new Metadata("login", "login"));
         add(new Metadata("password", "pass"));
         add(new Metadata("hostname", "localhost:" + port));
       }};
 
-      instance.setMetadata(metadatas);
+      instance.setMetadata(metadata);
       toReturn.add(instance);
       return toReturn;
     }
-
-//    @RequestMapping(value = "/rest/credentials/organizations/{org}", method = RequestMethod.GET)
-//    public Collection<H2oInstanceCredentials> getCredentials() {
-//
-//      Collection<H2oInstanceCredentials> h2oInstanceCredentials = new ArrayList<>();
-//      H2oInstanceCredentials credentials = new H2oInstanceCredentials();
-//      credentials.setGuid("test-guid");
-//      credentials.setHostname("localhost:" + port);
-//      credentials.setLogin("login");
-//      credentials.setPassword("pass");
-//      credentials.setName("name");
-//      h2oInstanceCredentials.add(credentials);
-//      return h2oInstanceCredentials;
-//    }
   }
 }

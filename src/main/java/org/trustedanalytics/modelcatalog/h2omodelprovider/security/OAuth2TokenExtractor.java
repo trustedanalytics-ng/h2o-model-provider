@@ -21,6 +21,8 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 
 import java.util.function.Function;
 
+//TODO: Wire instance of this class with mechanism of pushing data into model-catalog
+//Model catalog will be secured with OAuth so it will be necessary to Extract token and reuse it.
 public class OAuth2TokenExtractor implements Function<Authentication, String> {
 
   @Override

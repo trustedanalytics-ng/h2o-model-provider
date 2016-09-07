@@ -15,22 +15,22 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class H2oClientTest {
@@ -38,7 +38,7 @@ public class H2oClientTest {
   @Mock
   private H2oOperations h2oOperations;
   @Mock
-  private Instance h2oInstanceCredentials;
+  private H2oInstanceCredentials h2oInstanceCredentials;
 
   @InjectMocks
   private H2oClient h2oClient;

@@ -23,10 +23,10 @@ import lombok.Getter;
 @Getter
 public class H2oInstance {
 
-  private final Instance instanceCredentials;
+  private final H2oInstanceCredentials instanceCredentials;
   private final Collection<H2oModel> models;
 
-  public H2oInstance(Instance instanceCredentials, Collection<H2oModel> models) {
+  public H2oInstance(H2oInstanceCredentials instanceCredentials, Collection<H2oModel> models) {
     this.instanceCredentials = instanceCredentials;
     this.models = Collections.unmodifiableCollection(models);
   }

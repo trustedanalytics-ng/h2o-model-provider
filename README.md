@@ -4,7 +4,7 @@ It is intended to be used by `model-catalog`
 
 ## Required services
 
-* **service-exposer** - holds information about service instances
+* **Catalog** - holds information about offerings and service instances
 
 ## How to build
 

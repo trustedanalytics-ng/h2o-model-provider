@@ -15,7 +15,7 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 
 import java.util.HashMap;
@@ -36,16 +36,17 @@ public class H2oClientsPool {
     this.clientSupplier = clientSupplier;
   }
 
-  public H2oClient takeOutClient(Instance h2oInstanceCredentials) {
+  public H2oClient takeOutClient(H2oInstanceCredentials h2oInstanceCredentials) {
     return clients.computeIfAbsent(
             h2oInstanceCredentials.getId(),
             guid -> prepareH2oClient(h2oInstanceCredentials));
   }
 
-  private H2oClient prepareH2oClient(Instance h2oInstanceCredentials) {
+  private H2oClient prepareH2oClient(H2oInstanceCredentials h2oInstanceCredentials) {
     Optional<Metadata> host = h2oInstanceCredentials.getMetadata().stream()
         .filter(i -> i.getKey().equals("hostname")).findFirst();
 
+    //TODO: host.get shall be checked with ifPresent before!
     return new H2oClient(
             clientSupplier.get()
                     .requestInterceptor(prepareInterceptor(h2oInstanceCredentials))
@@ -53,7 +54,8 @@ public class H2oClientsPool {
             h2oInstanceCredentials);
   }
 
-  private BasicAuthRequestInterceptor prepareInterceptor(Instance h2oInstanceCredentials) {
+  private BasicAuthRequestInterceptor prepareInterceptor(H2oInstanceCredentials h2oInstanceCredentials) {
+    //TODO: Cover all paths here!
     Optional<Metadata> user = h2oInstanceCredentials.getMetadata().stream()
         .filter(i -> i.getKey().equals("login")).findFirst();
     Optional<Metadata> pass = h2oInstanceCredentials.getMetadata().stream()

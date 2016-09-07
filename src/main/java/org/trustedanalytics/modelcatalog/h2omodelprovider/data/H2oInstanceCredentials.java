@@ -15,33 +15,23 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import java.util.Collection;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@JsonIgnoreProperties({"bindings", "auditTrail"})
+@EqualsAndHashCode
 public class H2oInstanceCredentials {
-
+  private String id;
   private String name;
-  private String password;
-  private String login;
-  private String hostname;
-  private String guid;
-
-  @Override
-  public int hashCode() {
-    return guid.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof H2oInstanceCredentials)) {
-      return false;
-    }
-    if (obj == this) {
-      return true;
-    }
-    H2oInstanceCredentials other = (H2oInstanceCredentials) obj;
-    return guid.equals(other.getGuid());
-  }
+  private String type;
+  private String classId;
+  private Collection<Metadata> metadata;
+  private String state;
+  //Both bindings and audits fields are out of scope of this component so they are skipped.
 }

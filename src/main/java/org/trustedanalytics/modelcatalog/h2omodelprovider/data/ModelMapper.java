@@ -22,11 +22,11 @@ import org.trustedanalytics.modelcatalog.rest.api.ModelStatus;
 
 import java.util.function.Function;
 
-public class ModelMapper implements Function<H2oModel, ModelMetadata> {
+class ModelMapper implements Function<H2oModel, ModelMetadata> {
 
   private static final String DEFAULT_FORMAT = "h2o";
   private static final ModelStatus DEFAULT_STATUS = ModelStatus.DRAFT;
-  public static final String DEFAULT_OWNER_ID = "h2o user";
+  private static final String DEFAULT_OWNER_ID = "h2o user";
 
   private String h2oServerId;
 

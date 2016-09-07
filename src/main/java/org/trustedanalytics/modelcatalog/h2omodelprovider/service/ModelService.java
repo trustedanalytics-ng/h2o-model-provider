@@ -17,7 +17,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.service;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
 import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
 
@@ -36,21 +36,22 @@ public class ModelService {
   private static final String SERVICE = "h2o";
   private final String basicAuthCredentials;
   private final CatalogOperations catalogOperations;
-  private final LoadingCache<Instance, H2oInstance> h2oInstanceCache;
+  private final LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Autowired
   public ModelService(String basicAuthCredentials, CatalogOperations catalogOperations,
-                         LoadingCache<Instance, H2oInstance> h2oInstanceCache) {
+                         LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache) {
     this.basicAuthCredentials = basicAuthCredentials;
     this.catalogOperations = catalogOperations;
     this.h2oInstanceCache = h2oInstanceCache;
   }
 
   public Collection<ModelMetadata> fetchModels() {
-    Function<Instance, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
-    Optional<Instance> h2oBroker = catalogOperations.fetchOfferings(basicAuthCredentials)
+    Function<H2oInstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
+    Optional<H2oInstanceCredentials> h2oBroker = catalogOperations.fetchOfferings(basicAuthCredentials)
         .parallelStream().filter(x -> x.getName().equals(SERVICE)).findFirst();
 
+    //TODO: cover all flow paths
     String offeringId = h2oBroker.get().getId();
 
     return catalogOperations

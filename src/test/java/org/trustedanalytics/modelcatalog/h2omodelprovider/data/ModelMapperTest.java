@@ -39,7 +39,7 @@ public class ModelMapperTest {
   @Before
   public void setUp() {
     modelMapper = new ModelMapper(H2O_SERVER_ID);
-    h2oModel = createExamplaryH2oModel();
+    h2oModel = createExemplaryH2oModel();
   }
 
   @Test
@@ -97,7 +97,7 @@ public class ModelMapperTest {
     assertThat(modelMetadata.getOwnerId()).isEqualTo(DEFAULT_OWNER_ID);
   }
 
-  private H2oModel createExamplaryH2oModel() {
+  private H2oModel createExemplaryH2oModel() {
     H2oModel model = new H2oModel();
     H2oModelId modelId = new H2oModelId();
     modelId.setName(MODEL_NAME);

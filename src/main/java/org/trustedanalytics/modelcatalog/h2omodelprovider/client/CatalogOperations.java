@@ -16,7 +16,7 @@
 
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 
 import java.util.Collection;
 import feign.Headers;
@@ -27,10 +27,10 @@ import feign.RequestLine;
 public interface CatalogOperations {
   @RequestLine("GET /api/v1/services")
   @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
-  Collection<Instance> fetchOfferings(@Param("basicAuthBase64") String basicAuthBase64);
+  Collection<H2oInstanceCredentials> fetchOfferings(@Param("basicAuthBase64") String basicAuthBase64);
 
   @RequestLine("GET /api/v1/services/{serviceId}/instances")
   @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
-  Collection<Instance> fetchAllCredentials(@Param("basicAuthBase64") String basicAuthBase64,
+  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("basicAuthBase64") String basicAuthBase64,
                                                          @Param("serviceId") String serviceId);
 }
