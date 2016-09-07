@@ -15,20 +15,18 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.service;
 
-import com.google.common.cache.LoadingCache;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.client.ServiceExposerOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
 import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
 
+import com.google.common.cache.LoadingCache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.Collection;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,24 +34,27 @@ import java.util.stream.Collectors;
 public class ModelService {
 
   private static final String SERVICE = "h2o";
-  private final Function<Authentication, String> tokenExtractor;
-  private final ServiceExposerOperations serviceExposerOperations;
-  private final LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
+  private final String basicAuthCredentials;
+  private final CatalogOperations catalogOperations;
+  private final LoadingCache<Instance, H2oInstance> h2oInstanceCache;
 
   @Autowired
-  public ModelService(Function<Authentication, String> tokenExtractor,
-                         ServiceExposerOperations serviceExposerOperations,
-                         LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache) {
-    this.tokenExtractor = tokenExtractor;
-    this.serviceExposerOperations = serviceExposerOperations;
+  public ModelService(String basicAuthCredentials, CatalogOperations catalogOperations,
+                         LoadingCache<Instance, H2oInstance> h2oInstanceCache) {
+    this.basicAuthCredentials = basicAuthCredentials;
+    this.catalogOperations = catalogOperations;
     this.h2oInstanceCache = h2oInstanceCache;
   }
 
-  public Collection<ModelMetadata> fetchModels(UUID orgId) {
-    Function<H2oInstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
-    String token = "bearer " + tokenExtractor.apply(SecurityContextHolder.getContext().getAuthentication());
-    return serviceExposerOperations
-            .fetchAllCredentials(token, orgId, SERVICE)
+  public Collection<ModelMetadata> fetchModels() {
+    Function<Instance, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
+    Optional<Instance> h2oBroker = catalogOperations.fetchOfferings(basicAuthCredentials)
+        .parallelStream().filter(x -> x.getName().equals(SERVICE)).findFirst();
+
+    String offeringId = h2oBroker.get().getId();
+
+    return catalogOperations
+            .fetchAllCredentials(basicAuthCredentials, offeringId)
             .stream()
             .map(loadH2oInstance)
             .flatMap(ModelsRetriever::takeOutAndMapModels)

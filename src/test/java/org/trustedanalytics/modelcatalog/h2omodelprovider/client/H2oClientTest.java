@@ -24,6 +24,7 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class H2oClientTest {
   @Mock
   private H2oOperations h2oOperations;
   @Mock
-  private H2oInstanceCredentials h2oInstanceCredentials;
+  private Instance h2oInstanceCredentials;
 
   @InjectMocks
   private H2oClient h2oClient;

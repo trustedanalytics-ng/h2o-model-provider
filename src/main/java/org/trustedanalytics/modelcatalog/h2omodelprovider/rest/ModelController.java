@@ -63,7 +63,7 @@ public class ModelController implements ModelProviderApi {
   @Override
   public Collection<ModelMetadata> listModels(
           @ApiParam(value = "Organization id", required = true) @RequestParam UUID orgId) {
-    return modelService.fetchModels(orgId);
+    return modelService.fetchModels();
   }
 
   @ApiOperation(

@@ -15,14 +15,15 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import feign.Feign;
-import feign.auth.BasicAuthRequestInterceptor;
-
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
+import feign.Feign;
+import feign.auth.BasicAuthRequestInterceptor;
 
 public class H2oClientsPool {
 
@@ -35,22 +36,28 @@ public class H2oClientsPool {
     this.clientSupplier = clientSupplier;
   }
 
-  public H2oClient takeOutClient(H2oInstanceCredentials h2oInstanceCredentials) {
+  public H2oClient takeOutClient(Instance h2oInstanceCredentials) {
     return clients.computeIfAbsent(
-            h2oInstanceCredentials.getGuid(),
+            h2oInstanceCredentials.getId(),
             guid -> prepareH2oClient(h2oInstanceCredentials));
   }
 
-  private H2oClient prepareH2oClient(H2oInstanceCredentials h2oInstanceCredentials) {
+  private H2oClient prepareH2oClient(Instance h2oInstanceCredentials) {
+    Optional<Metadata> host = h2oInstanceCredentials.getMetadata().stream()
+        .filter(i -> i.getKey().equals("hostname")).findFirst();
+
     return new H2oClient(
             clientSupplier.get()
                     .requestInterceptor(prepareInterceptor(h2oInstanceCredentials))
-                    .target(H2oOperations.class, "http://" + h2oInstanceCredentials.getHostname()),
+                    .target(H2oOperations.class, "http://" + host.get().getValue()),
             h2oInstanceCredentials);
   }
 
-  private BasicAuthRequestInterceptor prepareInterceptor(H2oInstanceCredentials h2oInstanceCredentials) {
-    return new BasicAuthRequestInterceptor(
-            h2oInstanceCredentials.getLogin(), h2oInstanceCredentials.getPassword());
+  private BasicAuthRequestInterceptor prepareInterceptor(Instance h2oInstanceCredentials) {
+    Optional<Metadata> user = h2oInstanceCredentials.getMetadata().stream()
+        .filter(i -> i.getKey().equals("login")).findFirst();
+    Optional<Metadata> pass = h2oInstanceCredentials.getMetadata().stream()
+        .filter(i -> i.getKey().equals("password")).findFirst();
+    return new BasicAuthRequestInterceptor(user.get().getValue(), pass.get().getValue());
   }
 }

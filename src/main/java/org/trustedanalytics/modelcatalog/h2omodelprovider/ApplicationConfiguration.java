@@ -15,13 +15,28 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.security.OAuth2TokenExtractor;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.service.H2oInstanceCacheLoader;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy;
-
+import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
 
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import feign.Feign;
 import feign.Feign.Builder;
 import feign.Logger;
@@ -30,26 +45,17 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.client.ServiceExposerOperations;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.security.OAuth2TokenExtractor;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.service.H2oInstanceCacheLoader;
-
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 @Configuration
 public class ApplicationConfiguration {
 
-  @Value("${services.service-exposer}")
-  private String serviceExposerBaseUrl;
+  @Value("${services.catalog}")
+  private String catalogBaseUrl;
+
+  @Value("${services.catalogUser")
+  private String catalogUser;
+
+  @Value("${services.catalogPass")
+  private String catalogPass;
 
   @Value("${maximum_cache_size}")
   private long maximumCacheSize;
@@ -58,7 +64,7 @@ public class ApplicationConfiguration {
   private long cacheExpirationTimeS;
 
   @Bean
-  public LoadingCache<H2oInstanceCredentials, H2oInstance> buildH2oInstanceCache() {
+  public LoadingCache<Instance, H2oInstance> buildH2oInstanceCache() {
     return CacheBuilder.newBuilder()
             .maximumSize(maximumCacheSize)
             .expireAfterWrite(cacheExpirationTimeS, TimeUnit.SECONDS)
@@ -76,11 +82,6 @@ public class ApplicationConfiguration {
   }
 
   @Bean
-  public ServiceExposerOperations serviceExposerOperations() {
-    return clientSupplier().get().target(ServiceExposerOperations.class, serviceExposerBaseUrl);
-  }
-
-  @Bean
   public Supplier<Builder> clientSupplier() {
     return () -> Feign.builder()
             .encoder(new JacksonEncoder(objectMapper()))
@@ -95,5 +96,15 @@ public class ApplicationConfiguration {
     return new ObjectMapper()
             .setPropertyNamingStrategy(new LowerCaseWithUnderscoresStrategy())
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  }
+
+  @Bean
+  public CatalogOperations catalogOperations() {
+    return clientSupplier().get().target(CatalogOperations.class, catalogBaseUrl);
+  }
+
+  @Bean
+  public String basicAuthCredentials() {
+    return Base64.encodeBase64String((catalogUser + ":" + catalogPass).getBytes(Charsets.UTF_8));
   }
 }

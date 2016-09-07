@@ -4,7 +4,9 @@ security:
   ignored: /**
 
 services:
-  service-exposer: http://localhost:${server.port}
+  catalog: http://localhost:${server.port}
+  catalogUser: user
+  catalogPass: pass
 
 logging:
   level:

@@ -15,19 +15,23 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
-import java.util.Collection;
-import java.util.Collections;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import java.util.Collection;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class H2oInstance {
-
-  private final Instance instanceCredentials;
-  private final Collection<H2oModel> models;
-
-  public H2oInstance(Instance instanceCredentials, Collection<H2oModel> models) {
-    this.instanceCredentials = instanceCredentials;
-    this.models = Collections.unmodifiableCollection(models);
-  }
+@Setter
+@JsonIgnoreProperties({"bindings", "auditTrail"})
+@EqualsAndHashCode
+public class Instance {
+  private String id;
+  private String name;
+  private String type;
+  private String classId;
+  private Collection<Metadata> metadata;
+  private String state;
+  //Both bindings and audits fields are out of scope of this component so they are skipped.
 }

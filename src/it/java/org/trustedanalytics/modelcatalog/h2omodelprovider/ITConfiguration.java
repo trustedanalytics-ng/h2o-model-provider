@@ -15,24 +15,20 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
-import feign.Feign;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.Authentication;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
+import feign.Feign;
 
 @Configuration
-@Profile({"test"})
+@Profile("test")
 public class ITConfiguration {
 
-  @Value("${services.service-exposer}")
+  @Value("${services.catalog}")
   public String testUrl;
 
   @Autowired
@@ -43,10 +39,10 @@ public class ITConfiguration {
     return clientSupplier.get().target(H2oInstancesOperations.class, testUrl);
   }
 
-  @Bean
-  @Primary
-  public Function<Authentication, String> tokenExtractor() {
-    return authentication -> "token";
-  }
+//  @Bean
+//  @Primary
+//  public Function<Authentication, String> tokenExtractor() {
+//    return authentication -> "token";
+//  }
 
 }

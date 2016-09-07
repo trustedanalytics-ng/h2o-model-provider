@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Instance;
 
 import java.util.Collection;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 
-public class H2oClient {
-  
-  private final H2oOperations h2oOperations;
-  private final Instance h2oInstanceCredentials;
 
-  H2oClient(H2oOperations h2oOperations, Instance h2oInstanceCredentials) {
-    this.h2oOperations = h2oOperations;
-    this.h2oInstanceCredentials = h2oInstanceCredentials;
-  }
+public interface CatalogOperations {
+  @RequestLine("GET /api/v1/services")
+  @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
+  Collection<Instance> fetchOfferings(@Param("basicAuthBase64") String basicAuthBase64);
 
-  public H2oInstance fetchH2oInstance() {
-    Collection<H2oModel> models = fetchModels();
-    return new H2oInstance(h2oInstanceCredentials, models);
-  }
-
-  private Collection<H2oModel> fetchModels() {
-    return h2oOperations.fetchModels().getModels();
-  }
+  @RequestLine("GET /api/v1/services/{serviceId}/instances")
+  @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
+  Collection<Instance> fetchAllCredentials(@Param("basicAuthBase64") String basicAuthBase64,
+                                                         @Param("serviceId") String serviceId);
 }

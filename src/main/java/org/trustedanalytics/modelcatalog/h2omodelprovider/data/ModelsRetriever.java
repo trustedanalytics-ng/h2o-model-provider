@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class ModelsRetriever {
 
   public static Stream<ModelMetadata> takeOutAndMapModels(H2oInstance h2oInstance) {
-    String guid = h2oInstance.getInstanceCredentials().getGuid();
+    String guid = h2oInstance.getInstanceCredentials().getId().toString();
     ModelMapper mapper = new ModelMapper(guid);
     return h2oInstance.getModels()
             .stream()
