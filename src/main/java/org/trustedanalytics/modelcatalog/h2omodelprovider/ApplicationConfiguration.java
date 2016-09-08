@@ -24,10 +24,8 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.service.H2oInstanceCac
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy;
-import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +36,7 @@ import feign.Feign;
 import feign.Feign.Builder;
 import feign.Logger;
 import feign.Request;
+import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
@@ -48,10 +47,10 @@ public class ApplicationConfiguration {
   @Value("${services.catalog}")
   private String catalogBaseUrl;
 
-  @Value("${services.catalogUser")
+  @Value("${services.catalogUser}")
   private String catalogUser;
 
-  @Value("${services.catalogPass")
+  @Value("${services.catalogPass}")
   private String catalogPass;
 
   @Value("${maximum_cache_size}")
@@ -92,11 +91,8 @@ public class ApplicationConfiguration {
 
   @Bean
   public CatalogOperations catalogOperations() {
-    return clientSupplier().get().target(CatalogOperations.class, catalogBaseUrl);
-  }
-
-  @Bean
-  public String basicAuthCredentials() {
-    return Base64.encodeBase64String((catalogUser + ":" + catalogPass).getBytes(Charsets.UTF_8));
+    return clientSupplier().get()
+        .requestInterceptor(new BasicAuthRequestInterceptor(catalogUser, catalogPass))
+        .target(CatalogOperations.class, catalogBaseUrl);
   }
 }

@@ -38,11 +38,4 @@ public class ITConfiguration {
   public H2oInstancesOperations h2oInstancesOperations() {
     return clientSupplier.get().target(H2oInstancesOperations.class, testUrl);
   }
-
-//  @Bean
-//  @Primary
-//  public Function<Authentication, String> tokenExtractor() {
-//    return authentication -> "token";
-//  }
-
 }

@@ -26,11 +26,8 @@ import feign.RequestLine;
 
 public interface CatalogOperations {
   @RequestLine("GET /api/v1/services")
-  @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
-  Collection<H2oInstanceCredentials> fetchOfferings(@Param("basicAuthBase64") String basicAuthBase64);
+  Collection<H2oInstanceCredentials> fetchOfferings();
 
   @RequestLine("GET /api/v1/services/{serviceId}/instances")
-  @Headers({"Authorization: {basicAuthBase64}", "Content-Type: application/json"})
-  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("basicAuthBase64") String basicAuthBase64,
-                                                         @Param("serviceId") String serviceId);
+  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("serviceId") String serviceId);
 }

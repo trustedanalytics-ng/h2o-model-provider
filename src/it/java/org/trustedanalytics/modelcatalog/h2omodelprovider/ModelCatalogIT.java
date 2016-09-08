@@ -18,10 +18,10 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider;
 import static org.junit.Assert.assertEquals;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 
 import com.google.common.cache.LoadingCache;
@@ -87,7 +87,7 @@ public class ModelCatalogIT {
     public H2oModels getModels() {
 
       H2oModels h2oModels = new H2oModels();
-      h2oModels.setModels(new ArrayList<>());
+      h2oModels.setModels(new ArrayList<H2oModel>());
 
       H2oModel h2oModel = new H2oModel();
       h2oModel.setAlgorithmFullName("algorithmAbbreviation");
@@ -104,7 +104,7 @@ public class ModelCatalogIT {
 
     @RequestMapping(value = "/api/v1/services", method = RequestMethod.GET)
     public Collection<H2oInstanceCredentials> fetchOfferings() {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<H2oInstanceCredentials>();
       H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("h2o-guid");
       instance.setName("h2o");
@@ -114,7 +114,7 @@ public class ModelCatalogIT {
 
     @RequestMapping(value = "/api/v1/services/{serviceId}/instances", method = RequestMethod.GET)
     public Collection<H2oInstanceCredentials> fetchAllCredentials(@PathVariable String serviceId) {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<H2oInstanceCredentials>();
       H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");

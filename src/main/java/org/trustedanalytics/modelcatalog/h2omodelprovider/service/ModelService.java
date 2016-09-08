@@ -34,28 +34,27 @@ import java.util.stream.Collectors;
 public class ModelService {
 
   private static final String SERVICE = "h2o";
-  private final String basicAuthCredentials;
   private final CatalogOperations catalogOperations;
   private final LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Autowired
-  public ModelService(String basicAuthCredentials, CatalogOperations catalogOperations,
+  public ModelService(CatalogOperations catalogOperations,
                          LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache) {
-    this.basicAuthCredentials = basicAuthCredentials;
     this.catalogOperations = catalogOperations;
     this.h2oInstanceCache = h2oInstanceCache;
   }
 
   public Collection<ModelMetadata> fetchModels() {
     Function<H2oInstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
-    Optional<H2oInstanceCredentials> h2oBroker = catalogOperations.fetchOfferings(basicAuthCredentials)
+    //TODO: consider looking for running service
+    Optional<H2oInstanceCredentials> h2oBroker = catalogOperations.fetchOfferings()
         .parallelStream().filter(x -> x.getName().equals(SERVICE)).findFirst();
 
     //TODO: cover all flow paths
     String offeringId = h2oBroker.get().getId();
 
     return catalogOperations
-            .fetchAllCredentials(basicAuthCredentials, offeringId)
+            .fetchAllCredentials(offeringId)
             .stream()
             .map(loadH2oInstance)
             .flatMap(ModelsRetriever::takeOutAndMapModels)
