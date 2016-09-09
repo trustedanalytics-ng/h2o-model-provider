@@ -3,10 +3,13 @@ server.port: 56951
 security:
   ignored: /**
 
+sync:
+  delay_seconds: 1
+
 services:
   catalog: http://localhost:${server.port}
-  catalogUser: user
-  catalogPass: pass
+  catalog_user: user
+  catalog_pass: pass
 
 logging:
   level:

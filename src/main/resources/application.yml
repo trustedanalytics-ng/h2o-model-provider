@@ -1,12 +1,5 @@
-server.port: 9995
-
-security:
-  ignored: /open,/sdoc.jsp,/*.js,/api-docs,/api-docs/default/*,/images/*,/lib/*,/css/*,/v2/api-docs
-
-spring.oauth2.resource:
-  id: cloud_controller
-  jwt:
-    keyUri: ${TOKEN_KEY}
+sync:
+  delay_seconds: 60
 
 services:
   catalog: http://localhost:9991

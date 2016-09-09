@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,17 +53,12 @@ import java.util.concurrent.ExecutionException;
 public class ModelCatalogIT {
 
   @Autowired
-  private H2oInstancesOperations h2oInstancesOperations;
-
-  @Autowired
   private LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Test
-  public void shouldGetAndCacheModels() throws ExecutionException {
-
+  public void shouldGetAndCacheModels() throws InterruptedException, ExecutionException {
     assertEquals(0, h2oInstanceCache.size());
-
-    h2oInstancesOperations.getAnalyticsToolInstances(UUID.randomUUID());
+    Thread.sleep(2000);
 
     H2oInstanceCredentials h2oInstanceCredentials = new H2oInstanceCredentials();
     h2oInstanceCredentials.setId("test-guid");

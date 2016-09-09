@@ -19,13 +19,13 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperatio
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
-import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
 
 import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,7 +44,8 @@ public class ModelService {
     this.h2oInstanceCache = h2oInstanceCache;
   }
 
-  public Collection<ModelMetadata> fetchModels() {
+  @Scheduled(fixedDelayString = "${sync.delay_seconds:60}000")
+  public void fetchModels() {
     Function<H2oInstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
     //TODO: consider looking for running service
     Optional<H2oInstanceCredentials> h2oBroker = catalogOperations.fetchOfferings()
@@ -53,12 +54,14 @@ public class ModelService {
     //TODO: cover all flow paths
     String offeringId = h2oBroker.get().getId();
 
-    return catalogOperations
+   System.out.println("fetchModels will be fired...");
+   catalogOperations
             .fetchAllCredentials(offeringId)
             .stream()
             .map(loadH2oInstance)
             .flatMap(ModelsRetriever::takeOutAndMapModels)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList())
+            .forEach(x -> System.out.println(x.getId()));
   }
 
 }

@@ -29,6 +29,7 @@ import com.google.common.cache.LoadingCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -42,15 +43,16 @@ import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
 
 @Configuration
+@EnableScheduling
 public class ApplicationConfiguration {
 
   @Value("${services.catalog}")
   private String catalogBaseUrl;
 
-  @Value("${services.catalogUser}")
+  @Value("${services.catalog_user}")
   private String catalogUser;
 
-  @Value("${services.catalogPass}")
+  @Value("${services.catalog_pass}")
   private String catalogPass;
 
   @Value("${maximum_cache_size}")
