@@ -19,10 +19,10 @@
 
     <properties>
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
-        <jacoco-measurement-instructions>0.953</jacoco-measurement-instructions>
+        <jacoco-measurement-instructions>0.906</jacoco-measurement-instructions>
         <jacoco-measurement-branches>0.999</jacoco-measurement-branches>
-        <jacoco-measurement-lines>0.964</jacoco-measurement-lines>
-        <jacoco-measurement-classes>0.928</jacoco-measurement-classes>
+        <jacoco-measurement-lines>0.932</jacoco-measurement-lines>
+        <jacoco-measurement-classes>0.857</jacoco-measurement-classes>
         <sonar.sources>src/main,src/it</sonar.sources> <!-- change to <sonar.tests>src/test,src/it after DPNG-9488 -->
         <!-- meanwhile, to run analysis on standard test folder add -Dsonar.sources=src/test -Dsonar.tests=src/it -->
     </properties>

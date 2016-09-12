@@ -81,7 +81,7 @@ public class ModelCatalogIT {
     public H2oModels getModels() {
 
       H2oModels h2oModels = new H2oModels();
-      h2oModels.setModels(new ArrayList<H2oModel>());
+      h2oModels.setModels(new ArrayList<>());
 
       H2oModel h2oModel = new H2oModel();
       h2oModel.setAlgorithmFullName("algorithmAbbreviation");
@@ -98,7 +98,7 @@ public class ModelCatalogIT {
 
     @RequestMapping(value = "/api/v1/services", method = RequestMethod.GET)
     public Collection<H2oInstanceCredentials> fetchOfferings() {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<H2oInstanceCredentials>();
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
       H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("h2o-guid");
       instance.setName("h2o");
@@ -108,7 +108,7 @@ public class ModelCatalogIT {
 
     @RequestMapping(value = "/api/v1/services/{serviceId}/instances", method = RequestMethod.GET)
     public Collection<H2oInstanceCredentials> fetchAllCredentials(@PathVariable String serviceId) {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<H2oInstanceCredentials>();
+      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
       H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");

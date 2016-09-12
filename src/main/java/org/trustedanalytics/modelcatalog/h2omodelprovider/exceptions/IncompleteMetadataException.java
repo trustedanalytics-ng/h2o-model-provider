@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions;
 
-package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
+public class IncompleteMetadataException extends Exception {
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
-
-import java.util.Collection;
-import feign.Param;
-import feign.RequestLine;
-
-
-public interface CatalogOperations {
-  @RequestLine("GET /api/v1/services")
-  Collection<H2oInstanceCredentials> fetchOfferings();
-
-  @RequestLine("GET /api/v1/services/{serviceId}/instances")
-  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("serviceId") String serviceId);
+    public IncompleteMetadataException(String metadataKey, String instanceName) {
+      super("Unable to retrieve metadata entry <" + metadataKey
+          + "> for instance <" + instanceName + "> of H2O");
+    }
 }

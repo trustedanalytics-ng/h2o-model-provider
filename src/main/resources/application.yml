@@ -3,8 +3,8 @@ sync:
 
 services:
   catalog: http://localhost:9991
-  catalogUser: admin
-  catalogPass: password
+  catalog_user: admin
+  catalog_pass: password
 
 logging:
   level:

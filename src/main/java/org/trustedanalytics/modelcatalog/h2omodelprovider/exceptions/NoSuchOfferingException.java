@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
-
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
-
-import java.util.Collection;
-import feign.Param;
-import feign.RequestLine;
+package org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions;
 
 
-public interface CatalogOperations {
-  @RequestLine("GET /api/v1/services")
-  Collection<H2oInstanceCredentials> fetchOfferings();
-
-  @RequestLine("GET /api/v1/services/{serviceId}/instances")
-  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("serviceId") String serviceId);
+public class NoSuchOfferingException extends Exception {
+  public NoSuchOfferingException(String offeringName) {
+    super("Unable to locate " + offeringName
+        + " offering in given TAP Catalog instance."
+        + "\nPlease verify whether your environment was deployed correctly.");
+  }
 }
