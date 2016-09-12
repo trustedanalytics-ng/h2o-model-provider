@@ -19,6 +19,8 @@
 
     <properties>
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
+        <docker.imageName>${project.artifactId}</docker.imageName>
+        <docker.registry>tapimages.us.enableiot.com:8080</docker.registry>
         <jacoco-measurement-instructions>0.906</jacoco-measurement-instructions>
         <jacoco-measurement-branches>0.999</jacoco-measurement-branches>
         <jacoco-measurement-lines>0.932</jacoco-measurement-lines>
@@ -109,6 +111,24 @@
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.12</version>
+                <configuration>
+                    <imageName>${docker.imageName}</imageName>
+                    <baseImage>${docker.registry}/tap-base-java:java8-jessie</baseImage>
+                    <cmd>["java", "-jar", "/${project.build.finalName}.jar"]</cmd>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                    <useConfigFile>true</useConfigFile>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

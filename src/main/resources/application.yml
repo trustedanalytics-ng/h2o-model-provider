@@ -2,9 +2,9 @@ sync:
   delay_seconds: 60
 
 services:
-  catalog: http://localhost:9991
-  catalog_user: admin
-  catalog_pass: password
+  catalog: ${catalogUri:http://localhost:9991}
+  catalog_user: ${catalogUser:admin}
+  catalog_pass: ${catalogPass:password}
 
 logging:
   level:
