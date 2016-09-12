@@ -25,6 +25,7 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 
 import com.google.common.cache.LoadingCache;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -107,17 +107,16 @@ public class ModelCatalogIT {
     }
 
     @RequestMapping(value = "/api/v1/services/{serviceId}/instances", method = RequestMethod.GET)
-    public Collection<H2oInstanceCredentials> fetchAllCredentials(@PathVariable String serviceId) {
+    public Collection<H2oInstanceCredentials> fetchAllCredentials() {
       Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
       H2oInstanceCredentials instance = new H2oInstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");
 
-      Collection<Metadata> metadata = new ArrayList<Metadata>() {{
-        add(new Metadata("login", "login"));
-        add(new Metadata("password", "pass"));
-        add(new Metadata("hostname", "localhost:" + port));
-      }};
+      Collection<Metadata> metadata = Lists.newArrayList(
+          new Metadata("login", "login"),
+          new Metadata("password", "pass"),
+          new Metadata("hostname", "localhost:" + port));
 
       instance.setMetadata(metadata);
       toReturn.add(instance);

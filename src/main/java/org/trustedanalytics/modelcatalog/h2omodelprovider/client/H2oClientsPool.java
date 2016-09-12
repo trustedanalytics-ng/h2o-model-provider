@@ -19,6 +19,9 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCreden
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions.IncompleteMetadataException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,12 +31,14 @@ import feign.auth.BasicAuthRequestInterceptor;
 
 public class H2oClientsPool {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(H2oClientsPool.class);
+
   private final Supplier<Feign.Builder> clientSupplier;
 
   private final Map<String, H2oClient> clients;
-  private final String HOSTNAME_KEY = "hostname";
-  private final String LOGIN_KEY = "login";
-  private final String PASSWORD_KEY = "password";
+  private static final String HOSTNAME_KEY = "hostname";
+  private static final String LOGIN_KEY = "login";
+  private static final String PASSWORD_KEY = "password";
 
   public H2oClientsPool(Supplier<Feign.Builder> clientSupplier) {
     this.clients = new HashMap<>();
@@ -47,7 +52,7 @@ public class H2oClientsPool {
           try {
             return prepareH2oClient(h2oInstanceCredentials);
           } catch (IncompleteMetadataException e) {
-            e.printStackTrace();
+            LOGGER.error("Can't instantiate H2oClient out of its credentials", e);
             return null; //no mapping will be recorded (according to docs)
           }
         });
@@ -68,13 +73,16 @@ public class H2oClientsPool {
             h2oInstanceCredentials);
   }
 
-  private BasicAuthRequestInterceptor prepareInterceptor(H2oInstanceCredentials h2oInstanceCredentials) {
+  private BasicAuthRequestInterceptor prepareInterceptor(H2oInstanceCredentials h2oInstanceCredentials)
+      throws IncompleteMetadataException {
     Optional<Metadata> user = h2oInstanceCredentials.getMetadata().stream()
         .filter(i -> i.getKey().equals(LOGIN_KEY)).findFirst();
     Optional<Metadata> pass = h2oInstanceCredentials.getMetadata().stream()
         .filter(i -> i.getKey().equals(PASSWORD_KEY)).findFirst();
-    String username = user.map(Metadata::getValue).orElse("username");
-    String password = pass.map(Metadata::getValue).orElse("password");
+    String username = user.map(Metadata::getValue)
+        .orElseThrow(() -> new IncompleteMetadataException(LOGIN_KEY, h2oInstanceCredentials.getName()));
+    String password = pass.map(Metadata::getValue)
+        .orElseThrow(() -> new IncompleteMetadataException(PASSWORD_KEY, h2oInstanceCredentials.getName()));
     return new BasicAuthRequestInterceptor(username, password);
   }
 }

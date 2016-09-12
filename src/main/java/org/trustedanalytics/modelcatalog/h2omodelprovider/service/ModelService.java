@@ -22,6 +22,8 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions.NoSuchOfferingException;
 
 import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ModelService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ModelService.class);
 
   private static final String SERVICE = "h2o";
   private final CatalogOperations catalogOperations;
@@ -55,13 +59,13 @@ public class ModelService {
     String offeringId = h2oBroker.map(H2oInstanceCredentials::getId)
         .orElseThrow(() -> new NoSuchOfferingException(SERVICE));
 
-    System.out.println("fetchModels will be fired...");
+    LOGGER.info("fetchModels will be fired...");
     catalogOperations
             .fetchAllCredentials(offeringId)
             .stream()
             .map(loadH2oInstance)
             .flatMap(ModelsRetriever::takeOutAndMapModels)
             .collect(Collectors.toList())
-            .forEach(x -> System.out.println(x.getId()));
+            .forEach(x -> LOGGER.info(x.getId()));
   }
 }

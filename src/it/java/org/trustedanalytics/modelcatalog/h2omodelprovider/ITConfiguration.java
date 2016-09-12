@@ -15,14 +15,10 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.function.Supplier;
-import feign.Feign;
 
 @Configuration
 @Profile("test")
@@ -31,7 +27,4 @@ public class ITConfiguration {
 
   @Value("${services.catalog}")
   public String testUrl;
-
-  @Autowired
-  private Supplier<Feign.Builder> clientSupplier;
 }

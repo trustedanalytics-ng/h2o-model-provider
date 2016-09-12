@@ -21,7 +21,7 @@
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
         <docker.imageName>${project.artifactId}</docker.imageName>
         <docker.registry>tapimages.us.enableiot.com:8080</docker.registry>
-        <jacoco-measurement-instructions>0.906</jacoco-measurement-instructions>
+        <jacoco-measurement-instructions>0.877</jacoco-measurement-instructions>
         <jacoco-measurement-branches>0.999</jacoco-measurement-branches>
         <jacoco-measurement-lines>0.932</jacoco-measurement-lines>
         <jacoco-measurement-classes>0.857</jacoco-measurement-classes>
