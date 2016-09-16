@@ -18,7 +18,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.service.H2oInstanceCacheLoader;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -46,13 +46,13 @@ import feign.slf4j.Slf4jLogger;
 @EnableScheduling
 public class ApplicationConfiguration {
 
-  @Value("${services.catalog}")
+  @Value("${services.catalog.url}")
   private String catalogBaseUrl;
 
-  @Value("${services.catalog_user}")
+  @Value("${services.catalog.user}")
   private String catalogUser;
 
-  @Value("${services.catalog_pass}")
+  @Value("${services.catalog.pass}")
   private String catalogPass;
 
   @Value("${maximum_cache_size}")
@@ -62,7 +62,7 @@ public class ApplicationConfiguration {
   private long cacheExpirationTimeS;
 
   @Bean
-  public LoadingCache<H2oInstanceCredentials, H2oInstance> buildH2oInstanceCache() {
+  public LoadingCache<InstanceCredentials, H2oInstance> buildH2oInstanceCache() {
     return CacheBuilder.newBuilder()
             .maximumSize(maximumCacheSize)
             .expireAfterWrite(cacheExpirationTimeS, TimeUnit.SECONDS)

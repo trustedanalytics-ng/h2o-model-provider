@@ -25,6 +25,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ITConfiguration {
 
-  @Value("${services.catalog}")
+  @Value("${services.catalog.url}")
   public String testUrl;
 }

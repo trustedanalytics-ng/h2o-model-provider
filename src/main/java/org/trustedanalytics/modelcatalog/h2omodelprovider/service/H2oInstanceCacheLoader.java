@@ -17,11 +17,11 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.service;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 
 import com.google.common.cache.CacheLoader;
 
-public class H2oInstanceCacheLoader extends CacheLoader<H2oInstanceCredentials, H2oInstance> {
+public class H2oInstanceCacheLoader extends CacheLoader<InstanceCredentials, H2oInstance> {
 
   private H2oClientsPool h2oClientsPool;
 
@@ -30,8 +30,8 @@ public class H2oInstanceCacheLoader extends CacheLoader<H2oInstanceCredentials, 
   }
 
   @Override
-  public H2oInstance load(H2oInstanceCredentials h2oInstanceCredentials) {
-    return h2oClientsPool.takeOutClient(h2oInstanceCredentials).fetchH2oInstance();
+  public H2oInstance load(InstanceCredentials instanceCredentials) {
+    return h2oClientsPool.takeOutClient(instanceCredentials).fetchH2oInstance();
   }
 
 }

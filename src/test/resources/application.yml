@@ -7,9 +7,13 @@ sync:
   delay_seconds: 1
 
 services:
-  catalog: http://localhost:${server.port}
-  catalog_user: user
-  catalog_pass: pass
+  catalog:
+    url: http://localhost:${server.port}
+    user: user
+    pass: pass
+    hostname_key: hostname
+    login_key: login
+    pass_key: password
 
 logging:
   level:

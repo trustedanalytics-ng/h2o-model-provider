@@ -17,16 +17,15 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import lombok.Getter;
 
 @Getter
 public class H2oInstance {
 
-  private final H2oInstanceCredentials instanceCredentials;
+  private final InstanceCredentials instanceCredentials;
   private final Collection<H2oModel> models;
 
-  public H2oInstance(H2oInstanceCredentials instanceCredentials, Collection<H2oModel> models) {
+  public H2oInstance(InstanceCredentials instanceCredentials, Collection<H2oModel> models) {
     this.instanceCredentials = instanceCredentials;
     this.models = Collections.unmodifiableCollection(models);
   }

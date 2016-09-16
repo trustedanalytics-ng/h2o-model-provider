@@ -16,8 +16,9 @@
 package org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions;
 
 public class IncompleteMetadataException extends Exception {
+  private static final long serialVersionUID = -6935691178680969572L;
 
-    public IncompleteMetadataException(String metadataKey, String instanceName) {
+  public IncompleteMetadataException(String metadataKey, String instanceName) {
       super("Unable to retrieve metadata entry <" + metadataKey
           + "> for instance <" + instanceName + "> of H2O");
     }

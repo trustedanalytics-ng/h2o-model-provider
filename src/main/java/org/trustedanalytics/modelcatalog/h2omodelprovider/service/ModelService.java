@@ -17,7 +17,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.service;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions.NoSuchOfferingException;
 
@@ -39,24 +39,24 @@ public class ModelService {
 
   private static final String SERVICE = "h2o";
   private final CatalogOperations catalogOperations;
-  private final LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
+  private final LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Autowired
   public ModelService(CatalogOperations catalogOperations,
-                         LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache) {
+                         LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache) {
     this.catalogOperations = catalogOperations;
     this.h2oInstanceCache = h2oInstanceCache;
   }
 
   @Scheduled(fixedDelayString = "${sync.delay_seconds:60}000")
   public void fetchModels() throws NoSuchOfferingException {
-    Function<H2oInstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
+    Function<InstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
 
     //TODO: consider looking for running service
-    Optional<H2oInstanceCredentials> h2oBroker = catalogOperations.fetchOfferings()
+    Optional<InstanceCredentials> h2oBroker = catalogOperations.fetchOfferings()
         .parallelStream().filter(x -> x.getName().equals(SERVICE)).findFirst();
 
-    String offeringId = h2oBroker.map(H2oInstanceCredentials::getId)
+    String offeringId = h2oBroker.map(InstanceCredentials::getId)
         .orElseThrow(() -> new NoSuchOfferingException(SERVICE));
 
     LOGGER.info("fetchModels will be fired...");

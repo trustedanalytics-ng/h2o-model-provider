@@ -15,10 +15,9 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
+import java.util.Collection;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Collection;
 
 @Getter
 @Setter

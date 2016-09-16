@@ -17,6 +17,8 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions;
 
 
 public class NoSuchOfferingException extends Exception {
+  private static final long serialVersionUID = -5324959788261680347L;
+
   public NoSuchOfferingException(String offeringName) {
     super("Unable to locate " + offeringName
         + " offering in given TAP Catalog instance."

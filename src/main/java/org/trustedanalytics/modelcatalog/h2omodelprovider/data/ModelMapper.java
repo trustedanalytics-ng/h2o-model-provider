@@ -15,10 +15,10 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
-import com.google.common.base.Strings;
-
 import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
 import org.trustedanalytics.modelcatalog.rest.api.ModelStatus;
+
+import com.google.common.base.Strings;
 
 import java.util.function.Function;
 

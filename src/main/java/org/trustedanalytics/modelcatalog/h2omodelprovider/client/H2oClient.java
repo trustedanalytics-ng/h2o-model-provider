@@ -16,24 +16,24 @@
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 
 import java.util.Collection;
 
 public class H2oClient {
   
   private final H2oOperations h2oOperations;
-  private final H2oInstanceCredentials h2oInstanceCredentials;
+  private final InstanceCredentials instanceCredentials;
 
-  H2oClient(H2oOperations h2oOperations, H2oInstanceCredentials h2oInstanceCredentials) {
+  H2oClient(H2oOperations h2oOperations, InstanceCredentials instanceCredentials) {
     this.h2oOperations = h2oOperations;
-    this.h2oInstanceCredentials = h2oInstanceCredentials;
+    this.instanceCredentials = instanceCredentials;
   }
 
   public H2oInstance fetchH2oInstance() {
     Collection<H2oModel> models = fetchModels();
-    return new H2oInstance(h2oInstanceCredentials, models);
+    return new H2oInstance(instanceCredentials, models);
   }
 
   private Collection<H2oModel> fetchModels() {

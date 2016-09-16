@@ -15,12 +15,13 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
 import org.trustedanalytics.modelcatalog.rest.api.ModelStatus;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ModelMapperTest {
 

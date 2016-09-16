@@ -15,9 +15,9 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import feign.RequestLine;
-
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
+
+import feign.RequestLine;
 
 public interface H2oOperations {
 

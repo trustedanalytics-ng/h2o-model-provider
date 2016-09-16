@@ -16,7 +16,7 @@
 
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 
 import java.util.Collection;
 import feign.Param;
@@ -25,8 +25,8 @@ import feign.RequestLine;
 
 public interface CatalogOperations {
   @RequestLine("GET /api/v1/services")
-  Collection<H2oInstanceCredentials> fetchOfferings();
+  Collection<InstanceCredentials> fetchOfferings();
 
   @RequestLine("GET /api/v1/services/{serviceId}/instances")
-  Collection<H2oInstanceCredentials> fetchAllCredentials(@Param("serviceId") String serviceId);
+  Collection<InstanceCredentials> fetchAllCredentials(@Param("serviceId") String serviceId);
 }

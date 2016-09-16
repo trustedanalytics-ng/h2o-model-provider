@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ public class H2oClientTest {
   @Mock
   private H2oOperations h2oOperations;
   @Mock
-  private H2oInstanceCredentials h2oInstanceCredentials;
+  private InstanceCredentials instanceCredentials;
 
   @InjectMocks
   private H2oClient h2oClient;
@@ -60,7 +60,7 @@ public class H2oClientTest {
     // when
     H2oInstance h2oInstance = h2oClient.fetchH2oInstance();
     // then
-    assertThat(h2oInstance.getInstanceCredentials()).isSameAs(h2oInstanceCredentials);
+    assertThat(h2oInstance.getInstanceCredentials()).isSameAs(instanceCredentials);
   }
 
   private List<H2oModel> prepareModels() {

@@ -18,7 +18,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider;
 import static org.junit.Assert.assertEquals;
 
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
@@ -50,25 +50,25 @@ import java.util.concurrent.ExecutionException;
 @IntegrationTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("test")
-public class ModelCatalogIT {
+public class H2oModelProviderIT {
 
   @Autowired
-  private LoadingCache<H2oInstanceCredentials, H2oInstance> h2oInstanceCache;
+  private LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache;
 
   @Test
   public void shouldGetAndCacheModels() throws InterruptedException, ExecutionException {
     assertEquals(0, h2oInstanceCache.size());
     Thread.sleep(2000);
 
-    H2oInstanceCredentials h2oInstanceCredentials = new H2oInstanceCredentials();
-    h2oInstanceCredentials.setId("test-guid");
+    InstanceCredentials instanceCredentials = new InstanceCredentials();
+    instanceCredentials.setId("test-guid");
 
-    H2oInstanceCredentials h2oInstanceCredentialsNonexistent = new H2oInstanceCredentials();
-    h2oInstanceCredentialsNonexistent.setId("nonexistent-guid");
+    InstanceCredentials instanceCredentialsNonexistent = new InstanceCredentials();
+    instanceCredentialsNonexistent.setId("nonexistent-guid");
 
     assertEquals(1, h2oInstanceCache.size());
-    assertEquals(null, h2oInstanceCache.getIfPresent(h2oInstanceCredentialsNonexistent));
-    assertEquals(2, h2oInstanceCache.get(h2oInstanceCredentials).getModels().size());
+    assertEquals(null, h2oInstanceCache.getIfPresent(instanceCredentialsNonexistent));
+    assertEquals(2, h2oInstanceCache.get(instanceCredentials).getModels().size());
   }
 
   @RestController
@@ -97,9 +97,9 @@ public class ModelCatalogIT {
     }
 
     @RequestMapping(value = "/api/v1/services", method = RequestMethod.GET)
-    public Collection<H2oInstanceCredentials> fetchOfferings() {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
-      H2oInstanceCredentials instance = new H2oInstanceCredentials();
+    public Collection<InstanceCredentials> fetchOfferings() {
+      Collection<InstanceCredentials> toReturn = new ArrayList<>();
+      InstanceCredentials instance = new InstanceCredentials();
       instance.setId("h2o-guid");
       instance.setName("h2o");
       toReturn.add(instance);
@@ -107,9 +107,9 @@ public class ModelCatalogIT {
     }
 
     @RequestMapping(value = "/api/v1/services/{serviceId}/instances", method = RequestMethod.GET)
-    public Collection<H2oInstanceCredentials> fetchAllCredentials() {
-      Collection<H2oInstanceCredentials> toReturn = new ArrayList<>();
-      H2oInstanceCredentials instance = new H2oInstanceCredentials();
+    public Collection<InstanceCredentials> fetchAllCredentials() {
+      Collection<InstanceCredentials> toReturn = new ArrayList<>();
+      InstanceCredentials instance = new InstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");
 

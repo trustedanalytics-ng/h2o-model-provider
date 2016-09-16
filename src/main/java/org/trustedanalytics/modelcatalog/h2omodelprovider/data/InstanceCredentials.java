@@ -18,20 +18,36 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @JsonIgnoreProperties({"bindings", "auditTrail"})
-public class H2oInstanceCredentials {
+public class InstanceCredentials {
+  @Setter
   private String id;
+  @Setter
   private String name;
+  @Setter
   private String type;
+  @Setter
   private String classId;
   private Collection<Metadata> metadata;
+  private Map<String, String> metadataMap;
+  @Setter
   private String state;
-  //Both bindings and audits fields are out of scope of this component so they are skipped.
+
+  public void setMetadata(Collection<Metadata> metadata) {
+    this.metadata = metadata;
+
+    if(this.metadata != null)
+        this.metadataMap = this.metadata.stream()
+            .collect(Collectors.toMap(Metadata::getKey, Metadata::getValue));
+    else
+      this.metadataMap = null;
+  }
 
   @Override
   public int hashCode() {
@@ -40,13 +56,13 @@ public class H2oInstanceCredentials {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof H2oInstanceCredentials)) {
+    if (!(obj instanceof InstanceCredentials)) {
       return false;
     }
     if (obj == this) {
       return true;
     }
-    H2oInstanceCredentials other = (H2oInstanceCredentials) obj;
+    InstanceCredentials other = (InstanceCredentials) obj;
     return id.equals(other.getId());
   }
 }
