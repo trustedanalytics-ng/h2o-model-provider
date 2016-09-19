@@ -3,7 +3,7 @@ sync:
 
 services:
   catalog:
-    url: ${catalogUri:http://localhost:9991}
+    url: http://${catalogHost:localhost}:${catalogPort:9991}
     user: ${catalogUser:admin}
     pass: ${catalogPass:password}
     hostname_key: hostname
