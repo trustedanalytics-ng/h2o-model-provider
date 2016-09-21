@@ -14,6 +14,12 @@ services:
     hostname_key: hostname
     login_key: login
     pass_key: password
+    core_organization_uuid: d8741292-12c8-46bc-b3de-887c11748b00
+  model_catalog:
+    url: http://localhost:${server.port}
+  redis:
+    url: fakehost:fakeport
+    collection: models
 
 logging:
   level:

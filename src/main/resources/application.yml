@@ -9,7 +9,19 @@ services:
     hostname_key: hostname
     login_key: login
     pass_key: password
+    core_organization_uuid: ${coreOrganizationUuid}
+  model_catalog:
+    url: http://${modelCatalogHost:localhost}:${modelCatalogPort:9992}
+  redis:
+    url: ${redisHost:localhost}:${redisPort:6379}
+    collection: models
 
+spring.oauth2:
+  client:
+    id: tap
+    accessTokenUri: ${tokenUri}
+    clientId: ${clientId}
+    clientSecret: ${clientSecret}
 
 logging:
   level:
@@ -18,6 +30,3 @@ logging:
 
 maximum_cache_size: 1000
 cache_expiration_time_s: 60
-
-endpoints.enabled: false
-endpoints.health.enabled: true

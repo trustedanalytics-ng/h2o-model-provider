@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (c) 2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,46 +15,31 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
-import org.trustedanalytics.modelcatalog.rest.api.ModelMetadata;
-import org.trustedanalytics.modelcatalog.rest.api.ModelStatus;
+import static org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO.builder;
 
 import com.google.common.base.Strings;
-
+import java.util.HashSet;
 import java.util.function.Function;
+import org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO;
 
-class ModelMapper implements Function<H2oModel, ModelMetadata> {
+public class ModelMapper implements Function<H2oModel, ModelModificationParametersDTO> {
 
-  private static final String DEFAULT_FORMAT = "h2o";
-  private static final ModelStatus DEFAULT_STATUS = ModelStatus.DRAFT;
-  private static final String DEFAULT_OWNER_ID = "h2o user";
-
-  private String h2oServerId;
-
-  ModelMapper(String h2oServerId) {
-    this.h2oServerId = h2oServerId;
-  }
+  private static final String CREATION_TOOL = "h2o";
+  private static final String UNKNOWN_REVISION = "unknown";
 
   @Override
-  public ModelMetadata apply(H2oModel h2oModel) {
-    ModelMetadata modelMetadata = new ModelMetadata();
-
+  public ModelModificationParametersDTO apply(H2oModel h2oModel) {
     String modelName = h2oModel.getModelId().getName();
-    modelMetadata.setId(createId(modelName));
-    modelMetadata.setName(modelName);
+    String algorithm = extractAlgorithmName(h2oModel);
 
-    modelMetadata.setFormat(DEFAULT_FORMAT);
-
-    modelMetadata.setAlgorithm(extractAlgorithmName(h2oModel));
-    modelMetadata.setDescription(createDescription(modelName, modelMetadata.getAlgorithm()));
-
-    modelMetadata.setStatus(DEFAULT_STATUS);
-    modelMetadata.setOwnerId(DEFAULT_OWNER_ID);
-
-    return modelMetadata;
-  }
-
-  private String createId(String modelName) {
-    return h2oServerId + "_" + modelName;
+    return builder()
+        .name(modelName)
+        .revision(UNKNOWN_REVISION)
+        .algorithm(algorithm)
+        .description(createDescription(modelName, algorithm))
+        .creationTool(CREATION_TOOL)
+        .artifactsIds(new HashSet<>())
+        .build();
   }
 
   private String createDescription(String modelName, String algorithm) {
@@ -65,5 +50,4 @@ class ModelMapper implements Function<H2oModel, ModelMetadata> {
     String algoFullName = h2oModel.getAlgorithmFullName();
     return Strings.isNullOrEmpty(algoFullName) ? h2oModel.getAlgorithmAbbreviation() : algoFullName;
   }
-
 }

@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (c) 2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,15 +15,20 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.google.common.hash.Hashing;
+import java.nio.charset.Charset;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 public class H2oModel {
 
+  @JsonProperty("timestamp")
   private String timestamp;
 
   @JsonProperty("algo_full_name")
@@ -32,6 +37,14 @@ public class H2oModel {
   @JsonProperty("algo")
   private String algorithmAbbreviation;
 
+  @JsonProperty("model_id")
   private H2oModelId modelId;
 
+  @JsonIgnore private String h2oServerId;
+
+  public String computeHash() {
+    String toHash = h2oServerId + modelId.getName() + timestamp;
+    Charset charset = Charset.availableCharsets().get("UTF-8");
+    return Hashing.sha1().hashString(toHash, charset).toString();
+  }
 }

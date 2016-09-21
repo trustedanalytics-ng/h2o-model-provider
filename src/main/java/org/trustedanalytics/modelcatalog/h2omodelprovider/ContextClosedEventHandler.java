@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.cloud.security.oauth2.client.OAuth2ClientAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
+import org.springframework.stereotype.Component;
 
-@SpringBootApplication
-@EnableAutoConfiguration(exclude = {OAuth2ClientAutoConfiguration.class})
-public class Application {
+@Component
+public class ContextClosedEventHandler implements ApplicationListener<ContextClosedEvent> {
+  @Autowired ScheduledAnnotationBeanPostProcessor processor;
 
-  public static void main(String[] args) {
-    new SpringApplicationBuilder(Application.class).web(false).run(args);
+  @Override
+  public void onApplicationEvent(ContextClosedEvent event) {
+    processor.destroy();
   }
 }

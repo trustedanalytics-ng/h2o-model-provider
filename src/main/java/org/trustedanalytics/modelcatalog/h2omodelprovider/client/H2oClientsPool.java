@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (c) 2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,19 +15,17 @@
  */
 package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions.IncompleteMetadataException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
+import feign.Feign;
+import feign.auth.BasicAuthRequestInterceptor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import feign.Feign;
-import feign.auth.BasicAuthRequestInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.exceptions.IncompleteMetadataException;
 
 public class H2oClientsPool {
 
@@ -53,7 +51,7 @@ public class H2oClientsPool {
 
   public H2oClient takeOutClient(InstanceCredentials instanceCredentials) {
     return clients.computeIfAbsent(
-            instanceCredentials.getId(),
+        instanceCredentials.getId(),
         guid -> {
           try {
             return prepareH2oClient(instanceCredentials);
@@ -66,22 +64,29 @@ public class H2oClientsPool {
 
   private H2oClient prepareH2oClient(InstanceCredentials instanceCredentials)
       throws IncompleteMetadataException {
-    String hostname = Optional.ofNullable(instanceCredentials.getMetadataMap().get(hostnameKey))
-        .orElseThrow(() -> new IncompleteMetadataException(hostnameKey, instanceCredentials.getName()));
+    String hostname =
+        Optional.ofNullable(instanceCredentials.getMetadataMap().get(hostnameKey))
+            .orElseThrow(
+                () -> new IncompleteMetadataException(hostnameKey, instanceCredentials.getName()));
 
     return new H2oClient(
-            clientSupplier.get()
-                    .requestInterceptor(prepareInterceptor(instanceCredentials))
-                    .target(H2oOperations.class, "http://" + hostname),
+        clientSupplier
+            .get()
+            .requestInterceptor(prepareInterceptor(instanceCredentials))
+            .target(H2oOperations.class, "http://" + hostname),
         instanceCredentials);
   }
 
   private BasicAuthRequestInterceptor prepareInterceptor(InstanceCredentials instanceCredentials)
       throws IncompleteMetadataException {
-    String username = Optional.ofNullable(instanceCredentials.getMetadataMap().get(loginKey))
-        .orElseThrow(() -> new IncompleteMetadataException(loginKey, instanceCredentials.getName()));
-    String password = Optional.ofNullable(instanceCredentials.getMetadataMap().get(passwordKey))
-        .orElseThrow(() -> new IncompleteMetadataException(passwordKey, instanceCredentials.getName()));
+    String username =
+        Optional.ofNullable(instanceCredentials.getMetadataMap().get(loginKey))
+            .orElseThrow(
+                () -> new IncompleteMetadataException(loginKey, instanceCredentials.getName()));
+    String password =
+        Optional.ofNullable(instanceCredentials.getMetadataMap().get(passwordKey))
+            .orElseThrow(
+                () -> new IncompleteMetadataException(passwordKey, instanceCredentials.getName()));
 
     return new BasicAuthRequestInterceptor(username, password);
   }

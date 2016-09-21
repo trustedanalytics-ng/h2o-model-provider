@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
+package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 
-import java.util.stream.Stream;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 
-public class ModelsRetriever {
+public interface DatabaseOperations {
+  void rememberModel(H2oModel model);
 
-  private ModelsRetriever() {}
-
-  public static Stream<H2oModel> pullOutModels(H2oInstance h2oInstance) {
-    return h2oInstance.getModels().stream();
-  }
+  boolean checkIfExists(H2oModel model);
 }

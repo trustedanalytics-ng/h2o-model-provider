@@ -3,12 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-
-    <groupId>org.trustedanalytics.modelcatalog</groupId>
     <artifactId>h2o-model-provider</artifactId>
-    <version>0.0.4</version>
-
+    <version>0.0.7</version>
 
     <parent>
         <groupId>org.trustedanalytics</groupId>
@@ -16,29 +12,26 @@
         <version>0.6.3</version>
     </parent>
 
-
     <properties>
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
         <docker.imageName>${project.artifactId}</docker.imageName>
         <docker.registry>tapimages.us.enableiot.com:8080</docker.registry>
-        <jacoco-measurement-instructions>0.871</jacoco-measurement-instructions>
-        <jacoco-measurement-branches>0.999</jacoco-measurement-branches>
-        <jacoco-measurement-lines>0.932</jacoco-measurement-lines>
-        <jacoco-measurement-classes>0.857</jacoco-measurement-classes>
-        <sonar.sources>src/main,src/it</sonar.sources> <!-- change to <sonar.tests>src/test,src/it after DPNG-9488 -->
+        <jacoco-measurement-instructions>0.84</jacoco-measurement-instructions>
+        <jacoco-measurement-branches>0.8</jacoco-measurement-branches>
+        <jacoco-measurement-lines>0.85</jacoco-measurement-lines>
+        <jacoco-measurement-classes>0.8</jacoco-measurement-classes>
+        <sonar.sources>src/main,src/it
+        </sonar.sources> <!-- change to <sonar.tests>src/test,src/it after DPNG-9488 -->
         <!-- meanwhile, to run analysis on standard test folder add -Dsonar.sources=src/test -Dsonar.tests=src/it -->
     </properties>
 
-
     <dependencies>
-
         <dependency>
             <groupId>org.trustedanalytics.modelcatalog</groupId>
             <artifactId>model-catalog</artifactId>
-            <version>0.2.1</version>
+            <version>0.3.12</version>
             <classifier>api</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-security</artifactId>
@@ -56,7 +49,6 @@
             <artifactId>springfox-swagger2</artifactId>
             <version>2.3.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-core</artifactId>
@@ -69,13 +61,11 @@
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-slf4j</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -92,21 +82,60 @@
             <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
 
-
-
     <build>
-
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
             </resource>
         </resources>
-
         <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <header>license/license_header_2016.txt</header>
+                    <validHeaders>
+                        <validHeader>license/license_header_2015.txt</validHeader>
+                        <validHeader>license/license_header_2016.txt</validHeader>
+                    </validHeaders>
+                    <includes>
+                        <include>src/**/*.java</include>
+                        <include>src/**/*.html</include>
+                        <include>tools/*.sh</include>
+                        <include>license_checker/*.sh</include>
+                        <include>license/*.sh</include>
+                        <include>pack.sh</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                        <sh>SCRIPT_STYLE</sh>
+                        <html>XML_STYLE</html>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-license</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -168,7 +197,5 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
-
 </project>

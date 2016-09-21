@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (c) 2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,20 @@
 package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
 import static org.junit.Assert.assertEquals;
-
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import com.google.common.cache.LoadingCache;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import org.assertj.core.util.Lists;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +43,15 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.ExecutionException;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.DatabaseOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
+import org.trustedanalytics.modelcatalog.rest.client.ModelCatalogWriterClient;
+import org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {Application.class, ITConfiguration.class})
@@ -52,13 +61,21 @@ import java.util.concurrent.ExecutionException;
 @ActiveProfiles("test")
 public class H2oModelProviderIT {
 
-  @Autowired
-  private LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache;
+  @Autowired private LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache;
+
+  @Autowired private ModelCatalogWriterClient modelCatalogClient;
+
+  @Autowired private DatabaseOperations database;
+
+  @Before
+  public void setUp() {
+    reset(modelCatalogClient);
+  }
 
   @Test
   public void shouldGetAndCacheModels() throws InterruptedException, ExecutionException {
     assertEquals(0, h2oInstanceCache.size());
-    Thread.sleep(2000);
+    Thread.sleep(1500);
 
     InstanceCredentials instanceCredentials = new InstanceCredentials();
     instanceCredentials.setId("test-guid");
@@ -71,8 +88,27 @@ public class H2oModelProviderIT {
     assertEquals(2, h2oInstanceCache.get(instanceCredentials).getModels().size());
   }
 
+  @Test
+  public void shouldUploadDataToModelCatalogWhenMissing() throws InterruptedException {
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(false);
+    Thread.sleep(1500);
+
+    verify(modelCatalogClient, atLeastOnce())
+        .addModel(any(ModelModificationParametersDTO.class), any(UUID.class));
+  }
+
+  @Test
+  public void shouldNotSendAlreadyExistingDataToModelCatalog() throws InterruptedException {
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(true);
+    Thread.sleep(1500);
+
+    verifyZeroInteractions(modelCatalogClient);
+  }
+
   @RestController
-  public static class TestController {
+  public static class H2oAndCatalogMockController {
 
     @Value("${server.port}")
     public String port;
@@ -83,13 +119,17 @@ public class H2oModelProviderIT {
       H2oModels h2oModels = new H2oModels();
       h2oModels.setModels(new ArrayList<>());
 
+      H2oModelId firstId = new H2oModelId();
+      firstId.setName("name of first model");
       H2oModel h2oModel = new H2oModel();
       h2oModel.setAlgorithmFullName("algorithmAbbreviation");
-      h2oModel.setModelId(new H2oModelId());
+      h2oModel.setModelId(firstId);
 
+      H2oModelId secondId = new H2oModelId();
+      secondId.setName("name of second model");
       H2oModel h2oModel2 = new H2oModel();
       h2oModel2.setAlgorithmFullName("algo2");
-      h2oModel2.setModelId(new H2oModelId());
+      h2oModel2.setModelId(secondId);
 
       h2oModels.getModels().add(h2oModel);
       h2oModels.getModels().add(h2oModel2);
@@ -113,10 +153,11 @@ public class H2oModelProviderIT {
       instance.setId("test-guid");
       instance.setName("name");
 
-      Collection<Metadata> metadata = Lists.newArrayList(
-          new Metadata("login", "login"),
-          new Metadata("password", "pass"),
-          new Metadata("hostname", "localhost:" + port));
+      Collection<Metadata> metadata =
+          Lists.newArrayList(
+              new Metadata("login", "login"),
+              new Metadata("password", "pass"),
+              new Metadata("hostname", "localhost:" + port));
 
       instance.setMetadata(metadata);
       toReturn.add(instance);

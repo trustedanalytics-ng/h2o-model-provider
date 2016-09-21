@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright (c) 2016 Intel Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,30 +18,25 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
-import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 
 @RunWith(MockitoJUnitRunner.class)
 public class H2oClientTest {
 
-  @Mock
-  private H2oOperations h2oOperations;
-  @Mock
-  private InstanceCredentials instanceCredentials;
+  @Mock private H2oOperations h2oOperations;
+  @Mock private InstanceCredentials instanceCredentials;
 
-  @InjectMocks
-  private H2oClient h2oClient;
+  @InjectMocks private H2oClient h2oClient;
 
   @Test
   public void shouldGetModelsUsingH2oOperations() {
