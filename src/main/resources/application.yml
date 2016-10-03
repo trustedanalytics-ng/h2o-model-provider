@@ -3,25 +3,25 @@ sync:
 
 services:
   catalog:
-    url: http://${catalogHost:localhost}:${catalogPort:9991}
-    user: ${catalogUser:admin}
-    pass: ${catalogPass:password}
+    url: http://${CATALOG_HOST:localhost}:${CATALOG_PORT:9991}
+    user: ${CATALOG_USER:admin}
+    pass: ${CATALOG_PASS:password}
     hostname_key: hostname
     login_key: login
     pass_key: password
-    core_organization_uuid: ${coreOrganizationUuid}
+    core_organization_uuid: ${CORE_ORGANIZATION_UUID}
   model_catalog:
-    url: http://${modelCatalogHost:localhost}:${modelCatalogPort:9992}
+    url: http://${MODEL_CATALOG_HOST:localhost}:${MODEL_CATALOG_PORT:9992}
   redis:
-    url: ${redisHost:localhost}:${redisPort:6379}
+    url: ${REDIS_HOST:localhost}:${REDIS_PORT:6379}
     collection: models
 
 spring.oauth2:
   client:
     id: tap
-    accessTokenUri: ${tokenUri}
-    clientId: ${clientId}
-    clientSecret: ${clientSecret}
+    accessTokenUri: ${TOKEN_URI}
+    clientId: ${CLIENT_ID}
+    clientSecret: ${CLIENT_SECRET}
 
 logging:
   level:
