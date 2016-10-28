@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.DatabaseOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oSePublisherOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
@@ -67,9 +68,14 @@ public class H2oModelProviderIT {
 
   @Autowired private DatabaseOperations database;
 
+  @Autowired private H2oSePublisherOperations h2oSePublisherClient;
+
   @Before
   public void setUp() {
     reset(modelCatalogClient);
+    reset(h2oSePublisherClient);
+
+    when(h2oSePublisherClient.downloadEngine(any(), any())).thenReturn("fake jar".getBytes());
   }
 
   @Test
@@ -96,6 +102,24 @@ public class H2oModelProviderIT {
 
     verify(modelCatalogClient, atLeastOnce())
         .addModel(any(ModelModificationParametersDTO.class), any(UUID.class));
+  }
+
+  @Test
+  public void shouldDownloadJarFileOfModelWhenMissing() throws InterruptedException {
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(false);
+    Thread.sleep(1500);
+
+    verify(h2oSePublisherClient, atLeastOnce()).downloadEngine(any(), any());
+  }
+
+  @Test
+  public void shouldNotDownloadJarFileOfModelAlreadyPushed() throws InterruptedException {
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(true);
+    Thread.sleep(1500);
+
+    verifyZeroInteractions(h2oSePublisherClient);
   }
 
   @Test
@@ -157,7 +181,7 @@ public class H2oModelProviderIT {
           Lists.newArrayList(
               new Metadata("login", "login"),
               new Metadata("password", "pass"),
-              new Metadata("hostname", "localhost:" + port));
+              new Metadata("hostname", "http://localhost:" + port));
 
       instance.setMetadata(metadata);
       toReturn.add(instance);

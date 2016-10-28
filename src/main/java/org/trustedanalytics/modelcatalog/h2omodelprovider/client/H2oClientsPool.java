@@ -73,7 +73,7 @@ public class H2oClientsPool {
         clientSupplier
             .get()
             .requestInterceptor(prepareInterceptor(instanceCredentials))
-            .target(H2oOperations.class, "http://" + hostname),
+            .target(H2oOperations.class, hostname),
         instanceCredentials);
   }
 

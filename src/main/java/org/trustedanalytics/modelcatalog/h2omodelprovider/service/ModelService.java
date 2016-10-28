@@ -27,9 +27,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.DatabaseOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oSePublisherOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.MetadataUrlEncoder;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelFilter;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelMapper;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.ModelsRetriever;
@@ -47,6 +49,7 @@ class ModelService {
   private final LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache;
   private final ModelFilter modelFilter;
   private final DatabaseOperations database;
+  private final H2oSePublisherOperations h2oSePublisherClient;
 
   @Value("${services.catalog.core_organization_uuid}")
   private UUID coreOrganization;
@@ -57,19 +60,20 @@ class ModelService {
       LoadingCache<InstanceCredentials, H2oInstance> h2oInstanceCache,
       ModelCatalogWriterClient modelCatalogClient,
       ModelFilter modelFilter,
-      DatabaseOperations database) {
+      DatabaseOperations database,
+      H2oSePublisherOperations h2oSePublisherClient) {
     this.catalogOperations = catalogOperations;
     this.h2oInstanceCache = h2oInstanceCache;
     this.modelCatalogClient = modelCatalogClient;
     this.modelFilter = modelFilter;
     this.database = database;
+    this.h2oSePublisherClient = h2oSePublisherClient;
   }
 
   @Scheduled(fixedDelayString = "${sync.delay_seconds:60}000")
   public void fetchModels() throws NoSuchOfferingException {
     Function<InstanceCredentials, H2oInstance> loadH2oInstance = h2oInstanceCache::getUnchecked;
 
-    //TODO: consider looking for running service
     Optional<InstanceCredentials> h2oBroker =
         catalogOperations
             .fetchOfferings()
@@ -82,7 +86,7 @@ class ModelService {
             .map(InstanceCredentials::getId)
             .orElseThrow(() -> new NoSuchOfferingException(SERVICE));
 
-    LOGGER.info("fetchModels will be fired...");
+    LOGGER.info("Syncing informations about h2o models in the environment with model-catalog...");
     catalogOperations
         .fetchAllCredentials(offeringId)
         .stream()
@@ -90,11 +94,17 @@ class ModelService {
         .flatMap(ModelsRetriever::pullOutModels)
         .filter(modelFilter)
         .parallel()
-        .forEach(x -> pushToModelCatalog(x));
+        .forEach(this::pushToModelCatalog);
   }
 
   void pushToModelCatalog(H2oModel h2oModel) {
     ModelMapper mapper = new ModelMapper();
+
+    byte[] jar =
+        h2oSePublisherClient.downloadEngine(
+            MetadataUrlEncoder.encode(h2oModel), h2oModel.getModelId().getName());
+
+    LOGGER.debug("Size of generated JAR: " + jar.length);
     modelCatalogClient.addModel(mapper.apply(h2oModel), coreOrganization);
     database.rememberModel(h2oModel);
   }

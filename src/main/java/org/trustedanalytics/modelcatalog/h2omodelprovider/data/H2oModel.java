@@ -40,10 +40,10 @@ public class H2oModel {
   @JsonProperty("model_id")
   private H2oModelId modelId;
 
-  @JsonIgnore private String h2oServerId;
+  @JsonIgnore private InstanceCredentials parentServerCredentials;
 
   public String computeHash() {
-    String toHash = h2oServerId + modelId.getName() + timestamp;
+    String toHash = parentServerCredentials.getId() + modelId.getName() + timestamp;
     Charset charset = Charset.availableCharsets().get("UTF-8");
     return Hashing.sha1().hashString(toHash, charset).toString();
   }

@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.DatabaseOperations;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oSePublisherOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.RedisOperations;
 import org.trustedanalytics.modelcatalog.rest.client.ModelCatalogWriterClient;
 
@@ -37,6 +38,11 @@ class ITConfiguration {
   @Bean
   public ModelCatalogWriterClient modelCatalogClient() {
     return mock(ModelCatalogWriterClient.class);
+  }
+
+  @Bean
+  public H2oSePublisherOperations h2oSePublisherClient() {
+    return mock(H2oSePublisherOperations.class);
   }
 
   @Bean

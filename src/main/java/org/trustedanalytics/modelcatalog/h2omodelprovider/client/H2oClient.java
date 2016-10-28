@@ -41,7 +41,7 @@ public class H2oClient {
         .fetchModels()
         .getModels()
         .parallelStream()
-        .map(x -> x.setH2oServerId(instanceCredentials.getId()))
+        .map(x -> x.setParentServerCredentials(instanceCredentials))
         .collect(Collectors.toList());
   }
 }

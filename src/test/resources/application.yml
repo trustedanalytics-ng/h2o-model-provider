@@ -17,6 +17,8 @@ services:
     core_organization_uuid: d8741292-12c8-46bc-b3de-887c11748b00
   model_catalog:
     url: http://localhost:${server.port}
+  h2o_se_publisher:
+    url: http://localhost:${server.port}
   redis:
     url: fakehost:fakeport
     collection: models

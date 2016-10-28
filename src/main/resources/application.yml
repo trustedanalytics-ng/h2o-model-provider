@@ -12,6 +12,8 @@ services:
     core_organization_uuid: ${CORE_ORGANIZATION_UUID}
   model_catalog:
     url: http://${MODEL_CATALOG_HOST:localhost}:${MODEL_CATALOG_PORT:9992}
+  h2o_se_publisher:
+    url: http://${SE_PUBLISHER_HOST:localhost}:${SE_PUBLISHER_PORT:9993}
   redis:
     url: ${REDIS_HOST:localhost}:${REDIS_PORT:6379}
     collection: models

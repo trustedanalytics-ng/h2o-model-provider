@@ -45,6 +45,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.CatalogOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.DatabaseOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oClientsPool;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.client.H2oSePublisherOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.OAuth2TokenProvider;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.client.RedisOperations;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oInstance;
@@ -82,6 +83,9 @@ public class ApplicationConfiguration {
 
   @Value("${cache_expiration_time_s}")
   private long cacheExpirationTimeS;
+
+  @Value("${services.h2o_se_publisher.url}")
+  private String h2oSePublisherUrl;
 
   @Bean
   public LoadingCache<InstanceCredentials, H2oInstance> buildH2oInstanceCache() {
@@ -152,5 +156,11 @@ public class ApplicationConfiguration {
   @Bean
   public ModelFilter modelFilter(DatabaseOperations database) {
     return new ModelFilter(database);
+  }
+
+  @Bean
+  public H2oSePublisherOperations h2oSePublisherClient() {
+    return Feign.builder()
+        .target(H2oSePublisherOperations.class, h2oSePublisherUrl);
   }
 }

@@ -30,6 +30,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.client.RedisException;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModel;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
+import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RedisOperationsTest {
@@ -86,7 +87,9 @@ public class RedisOperationsTest {
 
   static H2oModel instantiateModel() {
     H2oModel model = new H2oModel();
-    model.setH2oServerId("123");
+    InstanceCredentials creds = new InstanceCredentials();
+    creds.setId("123");
+    model.setParentServerCredentials(creds);
     model.setTimestamp("123");
     H2oModelId modelId = new H2oModelId();
     model.setModelId(modelId);
