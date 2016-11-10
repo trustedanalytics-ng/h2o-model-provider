@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>h2o-model-provider</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 
     <parent>
         <groupId>org.trustedanalytics</groupId>
@@ -16,10 +16,10 @@
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
         <docker.imageName>${project.artifactId}</docker.imageName>
         <docker.registry>tapimages.us.enableiot.com:8080</docker.registry>
-        <jacoco-measurement-instructions>0.84</jacoco-measurement-instructions>
-        <jacoco-measurement-branches>0.8</jacoco-measurement-branches>
+        <jacoco-measurement-instructions>0.87</jacoco-measurement-instructions>
+        <jacoco-measurement-branches>0.91</jacoco-measurement-branches>
         <jacoco-measurement-lines>0.85</jacoco-measurement-lines>
-        <jacoco-measurement-classes>0.8</jacoco-measurement-classes>
+        <jacoco-measurement-classes>0.84</jacoco-measurement-classes>
         <sonar.sources>src/main,src/it
         </sonar.sources> <!-- change to <sonar.tests>src/test,src/it after DPNG-9488 -->
         <!-- meanwhile, to run analysis on standard test folder add -Dsonar.sources=src/test -Dsonar.tests=src/it -->
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.trustedanalytics.modelcatalog</groupId>
             <artifactId>model-catalog</artifactId>
-            <version>0.3.12</version>
+            <version>0.3.19</version>
             <classifier>api</classifier>
         </dependency>
         <dependency>

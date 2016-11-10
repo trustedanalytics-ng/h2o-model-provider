@@ -17,11 +17,13 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import com.google.common.cache.LoadingCache;
 import java.util.ArrayList;
@@ -51,7 +53,9 @@ import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModelId;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.H2oModels;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.InstanceCredentials;
 import org.trustedanalytics.modelcatalog.h2omodelprovider.data.Metadata;
+import org.trustedanalytics.modelcatalog.rest.client.ModelCatalogClientException;
 import org.trustedanalytics.modelcatalog.rest.client.ModelCatalogWriterClient;
+import org.trustedanalytics.modelcatalog.rest.entities.ModelDTO;
 import org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -70,11 +74,18 @@ public class H2oModelProviderIT {
 
   @Autowired private H2oSePublisherOperations h2oSePublisherClient;
 
+  private ModelDTO fakeModel;
+
   @Before
   public void setUp() {
     reset(modelCatalogClient);
     reset(h2oSePublisherClient);
 
+    UUID modelID = UUID.fromString("67cf91ce-5fad-4cf6-82c4-c0f932073035");
+    fakeModel = new ModelDTO();
+    fakeModel.setId(modelID);
+
+    when(modelCatalogClient.addModel(any(), any())).thenReturn(fakeModel);
     when(h2oSePublisherClient.downloadEngine(any(), any())).thenReturn("fake jar".getBytes());
   }
 
@@ -95,7 +106,7 @@ public class H2oModelProviderIT {
   }
 
   @Test
-  public void shouldUploadDataToModelCatalogWhenMissing() throws InterruptedException {
+  public void shouldPushMetadataToModelCatalogWhenModelMissing() throws InterruptedException {
     assertEquals(0, h2oInstanceCache.size());
     when(database.checkIfExists(any())).thenReturn(false);
     Thread.sleep(1500);
@@ -105,12 +116,38 @@ public class H2oModelProviderIT {
   }
 
   @Test
-  public void shouldDownloadJarFileOfModelWhenMissing() throws InterruptedException {
+  public void shouldUploadJarFileOfModelWhenPushingModel() throws InterruptedException {
     assertEquals(0, h2oInstanceCache.size());
     when(database.checkIfExists(any())).thenReturn(false);
     Thread.sleep(1500);
 
     verify(h2oSePublisherClient, atLeastOnce()).downloadEngine(any(), any());
+    verify(modelCatalogClient, atLeastOnce())
+        .addArtifact(eq(fakeModel.getId()), any(), any(), eq("name of first model.jar"));
+  }
+
+  @Test
+  public void shouldDeleteMetadataWhenArifactWasNotPushed() throws InterruptedException {
+
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(false);
+    when(modelCatalogClient.addModel(any(), any())).thenReturn(fakeModel);
+    when(modelCatalogClient.addArtifact(eq(fakeModel.getId()), any(), any(), any()))
+        .thenThrow(new ModelCatalogClientException("!"));
+    Thread.sleep(1500);
+
+    verify(modelCatalogClient, atLeastOnce()).deleteModel(fakeModel.getId());
+  }
+  
+  @Test
+  public void shouldNotPushArtifactWhenMetadataWasNotPushed() throws InterruptedException {
+
+    assertEquals(0, h2oInstanceCache.size());
+    when(database.checkIfExists(any())).thenReturn(false);
+    when(modelCatalogClient.addModel(any(), any())).thenThrow(new ModelCatalogClientException("!"));
+    Thread.sleep(1500);
+
+    verify(modelCatalogClient, never()).addArtifact(any(), any(), any(), any());
   }
 
   @Test
@@ -176,6 +213,7 @@ public class H2oModelProviderIT {
       InstanceCredentials instance = new InstanceCredentials();
       instance.setId("test-guid");
       instance.setName("name");
+      instance.setState("RUNNING");
 
       Collection<Metadata> metadata =
           Lists.newArrayList(

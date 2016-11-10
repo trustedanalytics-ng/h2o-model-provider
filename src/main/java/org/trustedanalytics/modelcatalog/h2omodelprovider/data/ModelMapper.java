@@ -18,7 +18,6 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.data;
 import static org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO.builder;
 
 import com.google.common.base.Strings;
-import java.util.HashSet;
 import java.util.function.Function;
 import org.trustedanalytics.modelcatalog.rest.entities.ModelModificationParametersDTO;
 
@@ -38,7 +37,6 @@ public class ModelMapper implements Function<H2oModel, ModelModificationParamete
         .algorithm(algorithm)
         .description(createDescription(modelName, algorithm))
         .creationTool(CREATION_TOOL)
-        .artifactsIds(new HashSet<>())
         .build();
   }
 

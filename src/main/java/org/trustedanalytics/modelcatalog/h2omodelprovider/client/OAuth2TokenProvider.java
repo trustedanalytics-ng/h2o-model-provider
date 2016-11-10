@@ -18,7 +18,7 @@ package org.trustedanalytics.modelcatalog.h2omodelprovider.client;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.trustedanalytics.modelcatalog.rest.client.configuration.OAuthTokenProvider;
+import org.trustedanalytics.modelcatalog.rest.client.http.OAuthTokenProvider;
 
 public class OAuth2TokenProvider implements OAuthTokenProvider {
   private final OAuth2ProtectedResourceDetails clientCredentials;
