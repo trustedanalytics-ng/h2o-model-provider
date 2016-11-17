@@ -29,7 +29,7 @@ import lombok.experimental.Accessors;
 public class H2oModel {
 
   @JsonProperty("timestamp")
-  private String timestamp;
+  private long timestamp;
 
   @JsonProperty("algo_full_name")
   private String algorithmFullName;
@@ -46,5 +46,9 @@ public class H2oModel {
     String toHash = parentServerCredentials.getId() + modelId.getName() + timestamp;
     Charset charset = Charset.availableCharsets().get("UTF-8");
     return Hashing.sha1().hashString(toHash, charset).toString();
+  }
+
+  public boolean isComplete() {
+    return timestamp > 0;
   }
 }

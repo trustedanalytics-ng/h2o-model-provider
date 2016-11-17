@@ -36,8 +36,8 @@ public class ModelFilter implements Predicate<H2oModel> {
 
   @Override
   public boolean test(H2oModel h2oModel) {
-    boolean modelNotExists = !database.checkIfExists(h2oModel);
-    LOGGER.info("Pushing <{}> to model-catalog: {}", h2oModel.getModelId().getName(), modelNotExists);
-    return modelNotExists;
+    boolean modelCanBeAdded = !database.checkIfExists(h2oModel) && h2oModel.isComplete();
+    LOGGER.info("Pushing <{}> to model-catalog: {}", h2oModel.getModelId().getName(), modelCanBeAdded);
+    return modelCanBeAdded;
   }
 }

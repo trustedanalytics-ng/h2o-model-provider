@@ -79,7 +79,7 @@ class ModelService {
     this.database = database;
     this.h2oSePublisherClient = h2oSePublisherClient;
     defaultActions = new HashSet<>();
-    defaultActions.add(ArtifactActionDTO.PUBLISH_TO_MARKETPLACE);
+    defaultActions.add(ArtifactActionDTO.PUBLISH_JAR_SCORING_ENGINE);
   }
 
   @Scheduled(fixedDelayString = "${sync.delay_seconds:60}000")

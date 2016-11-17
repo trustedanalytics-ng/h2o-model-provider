@@ -185,12 +185,14 @@ public class H2oModelProviderIT {
       H2oModel h2oModel = new H2oModel();
       h2oModel.setAlgorithmFullName("algorithmAbbreviation");
       h2oModel.setModelId(firstId);
+      h2oModel.setTimestamp(123);
 
       H2oModelId secondId = new H2oModelId();
       secondId.setName("name of second model");
       H2oModel h2oModel2 = new H2oModel();
       h2oModel2.setAlgorithmFullName("algo2");
       h2oModel2.setModelId(secondId);
+      h2oModel.setTimestamp(321);
 
       h2oModels.getModels().add(h2oModel);
       h2oModels.getModels().add(h2oModel2);

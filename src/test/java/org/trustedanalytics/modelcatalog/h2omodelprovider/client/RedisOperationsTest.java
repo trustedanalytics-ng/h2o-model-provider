@@ -90,7 +90,7 @@ public class RedisOperationsTest {
     InstanceCredentials creds = new InstanceCredentials();
     creds.setId("123");
     model.setParentServerCredentials(creds);
-    model.setTimestamp("123");
+    model.setTimestamp(123);
     H2oModelId modelId = new H2oModelId();
     model.setModelId(modelId);
     return model;
