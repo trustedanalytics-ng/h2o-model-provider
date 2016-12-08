@@ -23,6 +23,6 @@ public interface H2oSePublisherOperations {
 
   @Headers({"Accept: application/java-archive",
       "Content-type: application/x-www-form-urlencoded"})
-  @RequestLine("POST /rest/h2o/engines/{modelName}/downloads")
+  @RequestLine("POST /api/v1/engines/{modelName}/downloads")
   byte[] downloadEngine(String body, @Param("modelName") String modelName);
 }
