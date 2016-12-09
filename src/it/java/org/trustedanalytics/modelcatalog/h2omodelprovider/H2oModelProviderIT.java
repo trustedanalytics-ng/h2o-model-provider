@@ -204,7 +204,7 @@ public class H2oModelProviderIT {
       Collection<InstanceCredentials> toReturn = new ArrayList<>();
       InstanceCredentials instance = new InstanceCredentials();
       instance.setId("h2o-guid");
-      instance.setName("h2o");
+      instance.setName("h2o-350");
       toReturn.add(instance);
       return toReturn;
     }

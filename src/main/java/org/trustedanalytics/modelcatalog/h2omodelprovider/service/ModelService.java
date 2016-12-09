@@ -50,7 +50,7 @@ class ModelService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ModelService.class);
 
-  private static final String SERVICE = "h2o";
+  private static final String SERVICE = "h2o-350";
   private static final String EXPECTED_STATE = "RUNNING";
   private static final String ARTIFACT_EXTENSION = ".jar";
   private final CatalogOperations catalogOperations;
