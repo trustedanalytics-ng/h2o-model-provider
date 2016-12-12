@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>h2o-model-provider</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.13</version>
 
     <parent>
         <groupId>org.trustedanalytics</groupId>
@@ -15,7 +15,6 @@
     <properties>
         <start-class>org.trustedanalytics.modelcatalog.h2omodelprovider.Application</start-class>
         <docker.imageName>${project.artifactId}</docker.imageName>
-        <docker.registry>tapimages.us.enableiot.com:8080</docker.registry>
         <jacoco-measurement-instructions>0.87</jacoco-measurement-instructions>
         <jacoco-measurement-branches>0.91</jacoco-measurement-branches>
         <jacoco-measurement-lines>0.85</jacoco-measurement-lines>
@@ -142,7 +141,7 @@
                 <version>0.4.12</version>
                 <configuration>
                     <imageName>${docker.imageName}</imageName>
-                    <baseImage>${docker.registry}/tap-base-java:java8-jessie</baseImage>
+                    <baseImage>tapimages:8080/tap-base-java:java8-jessie</baseImage>
                     <cmd>["java", "-jar", "/${project.build.finalName}.jar"]</cmd>
                     <resources>
                         <resource>
