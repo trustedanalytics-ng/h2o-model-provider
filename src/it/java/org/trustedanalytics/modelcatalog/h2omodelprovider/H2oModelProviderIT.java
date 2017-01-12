@@ -112,7 +112,7 @@ public class H2oModelProviderIT {
     Thread.sleep(1500);
 
     verify(modelCatalogClient, atLeastOnce())
-        .addModel(any(ModelModificationParametersDTO.class), any(UUID.class));
+        .addModel(any(ModelModificationParametersDTO.class), any(String.class));
   }
 
   @Test

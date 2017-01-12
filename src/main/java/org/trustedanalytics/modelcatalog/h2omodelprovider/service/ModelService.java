@@ -62,7 +62,7 @@ class ModelService {
   private static Set<ArtifactActionDTO> defaultActions;
 
   @Value("${services.catalog.core_organization_uuid}")
-  private UUID coreOrganization;
+  private String coreOrganization;
 
   @Autowired
   public ModelService(
