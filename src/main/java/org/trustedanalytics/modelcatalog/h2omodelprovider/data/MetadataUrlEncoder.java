@@ -22,6 +22,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
 public class MetadataUrlEncoder {
+  
+  private MetadataUrlEncoder() {  }
 
   public static String encode(H2oModel model) {
     Collection<BasicNameValuePair> metadataNameValuePairs = new HashSet<>();
